@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Attest.Fake.Builders" Version="2.0.0" />
+    <PackageReference Include="Attest.Fake.Moq" Version="2.0.0" />
+    <PackageReference Include="JetBrains.Annotations" Version="2019.1.3" />
+    <PackageReference Include="Solid.Practices.Modularity" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Samples.AspNetCore.Server.Data.Contracts.Dto\Samples.AspNetCore.Server.Data.Contracts.Dto.csproj" />
+    <ProjectReference Include="..\Samples.AspNetCore.Server.Data.Contracts.Providers\Samples.AspNetCore.Server.Data.Contracts.Providers.csproj" />
+  </ItemGroup>
+
+</Project>

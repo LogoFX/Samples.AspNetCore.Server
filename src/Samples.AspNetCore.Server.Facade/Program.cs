@@ -1,20 +1,45 @@
+using System.IO;
+using System.Reflection;
+using JetBrains.Annotations;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
 
 namespace Samples.AspNetCore.Server.Facade
 {
+    /// <summary>
+    /// Entry point for the program
+    /// </summary>
+    [UsedImplicitly]
     public class Program
     {
+        private static IConfiguration Configuration { get; set; }
+
+        /// <summary>
+        /// The entry point of the program, where the program control starts and ends.
+        /// </summary>
+        /// <param name="args">The command-line arguments.</param>
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var executingDir = Path.GetDirectoryName(Assembly.GetCallingAssembly().Location);
+            Directory.SetCurrentDirectory(executingDir);
+
+            var builder = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json");
+            Configuration = builder.Build();
+
+            BuildWebHost(args).Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+        /// <summary>
+        /// Builds the web host.
+        /// </summary>
+        /// <returns>The web host.</returns>
+        /// <param name="args">Arguments.</param>
+        private static IWebHost BuildWebHost(string[] args) =>
+            WebHost.CreateDefaultBuilder(args)
+                .UseStartup<Startup>()
+                .UseConfiguration(Configuration)
+                .Build();
     }
 }

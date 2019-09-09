@@ -11,5 +11,6 @@ namespace Samples.AspNetCore.Server.Data.Fake.ProviderBuilders
             FakeFactoryContext.Current = new FakeFactory();
             ConstraintFactoryContext.Current = new ConstraintFactory();
         }
+
     }
 }

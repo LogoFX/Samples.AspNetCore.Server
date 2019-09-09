@@ -11,15 +11,18 @@ using Samples.AspNetCore.Server.Data.Contracts.Providers;
 
 namespace Samples.AspNetCore.Server.Facade
 {
+    /// <inheritdoc />
     public sealed class AuthorizationProvider : OpenIdConnectServerProvider
     {
         private readonly ILoginProvider _loginProvider;
 
+        /// <inheritdoc />
         public AuthorizationProvider(ILoginProvider loginProvider)
         {
             _loginProvider = loginProvider;
         }
 
+        /// <inheritdoc />
         public override Task ValidateTokenRequest(ValidateTokenRequestContext context)
         {
             // Reject the token requests that don't use
@@ -43,6 +46,7 @@ namespace Samples.AspNetCore.Server.Facade
             return Task.CompletedTask;
         }
 
+        /// <inheritdoc />
         public override Task HandleTokenRequest(HandleTokenRequestContext context)
         {
             // Only handle grant_type=password token requests and let the

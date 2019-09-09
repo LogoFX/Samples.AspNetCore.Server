@@ -15,7 +15,11 @@ namespace Samples.AspNetCore.Server.Facade
         {
             Prefixes = new[]
             {
-                "Samples.AspNetCore.Server.Facade", "Samples.AspNetCore.Server.Api", "Samples.AspNetCore.Server.Domain"
+                "Samples.AspNetCore.Server.Facade",
+                "Samples.AspNetCore.Server.Api",
+                "Samples.AspNetCore.Server.Domain",
+                "Samples.AspNetCore.Server.Data",
+                "Samples.AspNetCore.Server.Infra"
             }
         };
     }

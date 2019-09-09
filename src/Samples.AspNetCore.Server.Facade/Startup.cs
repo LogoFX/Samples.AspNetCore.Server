@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Samples.AspNetCore.Server.Infra;
 using Solid.Bootstrapping;
 using BootstrapperBase = LogoFX.Server.Bootstrapping.BootstrapperBase;
 
@@ -23,6 +24,7 @@ namespace Samples.AspNetCore.Server.Facade
                 .Use(new RegisterCustomCompositionModulesMiddleware<BootstrapperBase, IServiceCollection>())
                 .Use(new RegisterCoreMiddleware<BootstrapperBase>())
                 .Use(new RegisterControllersMiddleware<BootstrapperBase>());
+            bootstrapper.Use(new RegisterRequestFactoryMiddleware());
             bootstrapper.Initialize();
         }
 
@@ -38,7 +40,8 @@ namespace Samples.AspNetCore.Server.Facade
             app.UseCors("AllowAny")
                 .UseAuthentication()
                 .UseSwagger()
-                .UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"); });
+                .UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"); })
+                .UseMvc();
         }
     }
 }

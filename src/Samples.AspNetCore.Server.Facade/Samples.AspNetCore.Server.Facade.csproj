@@ -2,14 +2,22 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
+    <Configurations>DebugWithFake;Release</Configurations>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+  
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile></DocumentationFile>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile></DocumentationFile>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugWithFake|AnyCPU'">
+    <DocumentationFile>..\bin\DebugWithFake\Samples.AspNetCore.Server.Facade.xml</DocumentationFile>
+    <OutputPath>..\bin\DebugWithFake</OutputPath>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,8 +32,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Samples.AspNetCore.Server.Data.Contracts.Dto\Samples.AspNetCore.Server.Data.Contracts.Dto.csproj" />
-    <ProjectReference Include="..\Samples.AspNetCore.Server.Data.Contracts.Providers\Samples.AspNetCore.Server.Data.Contracts.Providers.csproj" />
+    <ProjectReference Include="..\Samples.AspNetCore.Server.Api\Samples.AspNetCore.Server.Api.csproj" />
+    <ProjectReference Include="..\Samples.AspNetCore.Server.Data.Fake.ProviderBuilders\Samples.AspNetCore.Server.Data.Fake.ProviderBuilders.csproj" />
+    <ProjectReference Include="..\Samples.AspNetCore.Server.Data.Fake.Providers\Samples.AspNetCore.Server.Data.Fake.Providers.csproj" />
   </ItemGroup>
 
 </Project>

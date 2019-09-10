@@ -41,5 +41,31 @@ namespace Samples.AspNetCore.Server.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Deletes user by user name.
+        /// </summary>
+        /// <param name="username">User's name.</param>
+        /// <returns></returns>
+        [HttpGet("Delete")]
+        public async Task<IActionResult> Delete(string username)
+        {
+            try
+            {
+                var users = await _usersProvider.GetUsersAsync();
+                var user = users.SingleOrDefault(x => string.Compare(x.Username, username, StringComparison.OrdinalIgnoreCase) == 0);
+                if (user == null)
+                {
+                    return NotFound($"User '{username}' not found.");
+                }
+
+                await _usersProvider.RemoveUserAsync(user);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult($"Unable to retrieve algorithms: {ex.Message}");
+            }
+        }
     }
 }

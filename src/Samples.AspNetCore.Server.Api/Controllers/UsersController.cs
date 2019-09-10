@@ -25,7 +25,7 @@ namespace Samples.AspNetCore.Server.Api.Controllers
         }
 
         /// <summary>
-        /// Gets users.
+        /// Gets all users.
         /// </summary>
         /// <returns>The list of users.</returns>
         [HttpGet]
@@ -42,25 +42,15 @@ namespace Samples.AspNetCore.Server.Api.Controllers
         }
 
         /// <summary>
-        /// Deletes user by user name.
+        /// Gets user by id.
         /// </summary>
-        /// <param name="username">User's name.</param>
-        /// <returns>The list of users.</returns>
-        [HttpGet("Delete")]
-        public async Task<IActionResult> Delete(string username)
+        /// <returns>The user.</returns>
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(Guid id)
         {
             try
             {
-                var users = await _usersProvider.GetUsersAsync();
-                var user = users.SingleOrDefault(x => string.Compare(x.Username, username, StringComparison.OrdinalIgnoreCase) == 0);
-                if (user == null)
-                {
-                    return NotFound($"User '{username}' not found.");
-                }
-
-                await _usersProvider.RemoveUserAsync(user);
-
-                return Ok((await _usersProvider.GetUsersAsync()).Select(u => u.ToModel()));
+                return Ok((await _usersProvider.GetUserById(id)).ToModel());
             }
             catch (Exception ex)
             {
@@ -69,30 +59,72 @@ namespace Samples.AspNetCore.Server.Api.Controllers
         }
 
         /// <summary>
-        /// Updates user's data'.
+        /// Gets user by name.
         /// </summary>
-        /// <param name="username">User's name.</param>
-        /// <param name="newFullname">New user's full name.'</param>
-        /// <returns>The list of users.</returns>
-        [HttpGet("Update")]
-        public async Task<IActionResult> Update(string username, string newFullname)
+        /// <returns>The user.</returns>
+        [HttpGet("name/{username}")]
+        public async Task<IActionResult> GetByName(string username)
         {
             try
             {
-                var users = await _usersProvider.GetUsersAsync();
-                var user = users.SingleOrDefault(x => string.Compare(x.Username, username, StringComparison.OrdinalIgnoreCase) == 0);
+                return Ok((await _usersProvider.GetUserByName(username)).ToModel());
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult($"Unable to retrieve users: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Deletes user by user name.
+        /// </summary>
+        /// <param name="username">User's name.</param>
+        /// <returns></returns>
+        [HttpDelete]
+        public async Task<IActionResult> Delete(string username)
+        {
+            try
+            {
+                var user = await _usersProvider.GetUserByName(username);
                 if (user == null)
                 {
                     return NotFound($"User '{username}' not found.");
                 }
 
-                await _usersProvider.UpdateUserAsync(user, newFullname);
+                await _usersProvider.RemoveUserAsync(user.Id);
 
-                return Ok((await _usersProvider.GetUsersAsync()).Select(u => u.ToModel()));
+                return Ok();
             }
             catch (Exception ex)
             {
-                return new BadRequestObjectResult($"Unable to retrieve users: {ex.Message}");
+                return new BadRequestObjectResult($"Unable to delete the user: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Updates user's data'.
+        /// </summary>
+        /// <param name="username">User's name.</param>
+        /// <param name="fullname">New user's full name.'</param>
+        /// <returns></returns>
+        [HttpPut]
+        public async Task<IActionResult> Update(string username, string fullname)
+        {
+            try
+            {
+                var user = await _usersProvider.GetUserByName(username);
+                if (user == null)
+                {
+                    return NotFound($"User '{username}' not found.");
+                }
+
+                await _usersProvider.UpdateUserAsync(user.Id, username, fullname);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult($"Unable to update the user: {ex.Message}");
             }
         }
 
@@ -102,17 +134,17 @@ namespace Samples.AspNetCore.Server.Api.Controllers
         /// <param name="username">User's name.</param>
         /// <param name="fullname">User's full name.'</param>
         /// <returns>The list of users.</returns>
-        [HttpGet("Add")]
+        [HttpPost]
         public async Task<IActionResult> Add(string username, string fullname)
         {
             try
             {
                 await _usersProvider.AddUserAsync(username, fullname);
-                return Ok((await _usersProvider.GetUsersAsync()).Select(u => u.ToModel()));
+                return Ok();
             }
             catch (Exception ex)
             {
-                return new BadRequestObjectResult($"Unable to retrieve users: {ex.Message}");
+                return new BadRequestObjectResult($"Unable to add a user: {ex.Message}");
             }
         }
     }

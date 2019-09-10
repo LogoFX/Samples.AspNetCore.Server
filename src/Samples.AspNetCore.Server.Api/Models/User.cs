@@ -1,10 +1,14 @@
-﻿namespace Samples.AspNetCore.Server.Api.Models
+﻿using System;
+
+namespace Samples.AspNetCore.Server.Api.Models
 {
     /// <summary>
     /// User.
     /// </summary>
     internal class User
     {
+        public Guid Id { get; set; }
+
         /// <summary>
         /// Username.
         /// </summary>

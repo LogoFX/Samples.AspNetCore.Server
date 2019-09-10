@@ -6,7 +6,12 @@ namespace Samples.AspNetCore.Server.Api.Models
     {
         public static User ToModel(this UserDto userDto)
         {
-            return new User {Username = userDto.Username, Fullname = userDto.Fullname};
+            return new User
+            {
+                Id = userDto.Id,
+                Username = userDto.Username,
+                Fullname = userDto.Fullname
+            };
         }
     }
 }

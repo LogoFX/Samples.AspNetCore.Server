@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Samples.AspNetCore.Server.Data.Contracts.Dto;
 
@@ -8,10 +9,14 @@ namespace Samples.AspNetCore.Server.Data.Contracts.Providers
     {
          Task<IEnumerable<UserDto>> GetUsersAsync();
 
+         Task<UserDto> GetUserByName(string username);
+
+         Task<UserDto> GetUserById(Guid id);
+
          Task<UserDto> AddUserAsync(string username, string fullname);
 
-         Task<bool> RemoveUserAsync(UserDto user);
+         Task<bool> RemoveUserAsync(Guid id);
 
-         Task<UserDto> UpdateUserAsync(UserDto user, string fullname);
+         Task<UserDto> UpdateUserAsync(Guid id,  string username, string fullname);
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Samples.AspNetCore.Server.Data.Contracts.Dto;
 using Samples.AspNetCore.Server.Data.Contracts.Providers;
@@ -13,43 +15,77 @@ namespace Samples.AspNetCore.Server.Data.Fake.Providers
         {
             _users.AddRange(new[]
             {
-                new UserDto {Username = "User1", Fullname = "User A"},
-                new UserDto {Username = "User2", Fullname = "User B"},
-                new UserDto {Username = "User3", Fullname = "User C"},
+                CreateUser("User1", "User One"),
+                CreateUser("User2", "User Two"),
+                CreateUser("User3", "User Three")
             });
+        }
+
+        private UserDto CreateUser(string username, string fullname)
+        {
+            return new UserDto {Id = Guid.NewGuid(), Username = username, Fullname = fullname};
+        }
+
+        private UserDto GetUserByNameInternal(string username)
+        {
+            return _users.FirstOrDefault(x => string.Compare(x.Username, username, StringComparison.OrdinalIgnoreCase) == 0);
+        }
+
+        private UserDto GetUserByIdInternal(Guid id)
+        {
+            return _users.FirstOrDefault(x => x.Id == id);
         }
 
         public Task<IEnumerable<UserDto>> GetUsersAsync()
         {
-            IEnumerable<UserDto> result = _users.ToArray();
-            return Task.Run(() => result);
+            return Task.Run(() => (IEnumerable<UserDto>) _users.ToArray());
+        }
+
+        public Task<UserDto> GetUserByName(string username)
+        {
+            return Task.Run(() => GetUserByNameInternal(username));
+        }
+
+        public Task<UserDto> GetUserById(Guid id)
+        {
+            return Task.Run(() => GetUserByIdInternal(id));
         }
 
         public Task<UserDto> AddUserAsync(string username, string fullname)
         {
-            var userDto = new UserDto {Username = username, Fullname = fullname};
-            _users.Add(userDto);
-            return Task.Run(() => userDto);
-        }
-
-        public Task<bool> RemoveUserAsync(UserDto user)
-        {
-            return Task.Run(() => _users.Remove(user));
-        }
-
-        public Task<UserDto> UpdateUserAsync(UserDto user, string fullname)
-        {
-            _users.Remove(user);
-
-            var userDto = new UserDto
+            return Task.Run(() =>
             {
-                Username = user.Username,
-                Fullname = fullname
-            };
+                if (GetUserByNameInternal(username) != null)
+                {
+                    throw new ApplicationException($"User '{username}' already added.");
+                }
 
-            _users.Add(userDto);
+                var userDto = CreateUser(username, fullname);
+                _users.Add(userDto);
 
-            return Task.Run(() => userDto);
+                return userDto;
+            });
+        }
+
+        public Task<bool> RemoveUserAsync(Guid id)
+        {
+            return Task.Run(() =>
+            {
+                var user = GetUserByIdInternal(id);
+                return _users.Remove(user);
+            });
+        }
+
+        public Task<UserDto> UpdateUserAsync(Guid id, string username, string fullname)
+        {
+            return Task.Run(() =>
+            {
+                var user = GetUserByIdInternal(id);
+                user.Username = username;
+                user.Fullname = fullname;
+
+                return user;
+            });
         }
     }
 }

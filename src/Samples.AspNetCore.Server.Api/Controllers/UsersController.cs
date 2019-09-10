@@ -45,7 +45,7 @@ namespace Samples.AspNetCore.Server.Api.Controllers
         /// Deletes user by user name.
         /// </summary>
         /// <param name="username">User's name.</param>
-        /// <returns></returns>
+        /// <returns>The list of users.</returns>
         [HttpGet("Delete")]
         public async Task<IActionResult> Delete(string username)
         {
@@ -60,7 +60,35 @@ namespace Samples.AspNetCore.Server.Api.Controllers
 
                 await _usersProvider.RemoveUserAsync(user);
 
-                return Ok();
+                return Ok((await _usersProvider.GetUsersAsync()).Select(u => u.ToModel()));
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult($"Unable to retrieve algorithms: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Updates user's data'.
+        /// </summary>
+        /// <param name="username">User's name.</param>
+        /// <param name="newFullname">New user's full name.'</param>
+        /// <returns>The list of users.</returns>
+        [HttpGet("Update")]
+        public async Task<IActionResult> Update(string username, string newFullname)
+        {
+            try
+            {
+                var users = await _usersProvider.GetUsersAsync();
+                var user = users.SingleOrDefault(x => string.Compare(x.Username, username, StringComparison.OrdinalIgnoreCase) == 0);
+                if (user == null)
+                {
+                    return NotFound($"User '{username}' not found.");
+                }
+
+                await _usersProvider.UpdateUserAsync(user, newFullname);
+
+                return Ok((await _usersProvider.GetUsersAsync()).Select(u => u.ToModel()));
             }
             catch (Exception ex)
             {

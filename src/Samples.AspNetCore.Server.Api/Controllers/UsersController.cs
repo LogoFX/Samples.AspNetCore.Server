@@ -37,7 +37,7 @@ namespace Samples.AspNetCore.Server.Api.Controllers
             }
             catch (Exception ex)
             {
-                return new BadRequestObjectResult($"Unable to retrieve algorithms: {ex.Message}");
+                return new BadRequestObjectResult($"Unable to retrieve users: {ex.Message}");
             }
         }
 
@@ -64,7 +64,7 @@ namespace Samples.AspNetCore.Server.Api.Controllers
             }
             catch (Exception ex)
             {
-                return new BadRequestObjectResult($"Unable to retrieve algorithms: {ex.Message}");
+                return new BadRequestObjectResult($"Unable to retrieve users: {ex.Message}");
             }
         }
 
@@ -92,7 +92,27 @@ namespace Samples.AspNetCore.Server.Api.Controllers
             }
             catch (Exception ex)
             {
-                return new BadRequestObjectResult($"Unable to retrieve algorithms: {ex.Message}");
+                return new BadRequestObjectResult($"Unable to retrieve users: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Adds new user'.
+        /// </summary>
+        /// <param name="username">User's name.</param>
+        /// <param name="fullname">User's full name.'</param>
+        /// <returns>The list of users.</returns>
+        [HttpGet("Add")]
+        public async Task<IActionResult> Add(string username, string fullname)
+        {
+            try
+            {
+                await _usersProvider.AddUserAsync(username, fullname);
+                return Ok((await _usersProvider.GetUsersAsync()).Select(u => u.ToModel()));
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult($"Unable to retrieve users: {ex.Message}");
             }
         }
     }

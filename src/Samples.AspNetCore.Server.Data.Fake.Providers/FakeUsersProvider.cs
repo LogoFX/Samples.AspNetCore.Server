@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Samples.AspNetCore.Server.Data.Contracts.Dto;
 using Samples.AspNetCore.Server.Data.Contracts.Providers;
 
 namespace Samples.AspNetCore.Server.Data.Fake.Providers
 {
-    public class FakeUsersProvider : IUsersProvider
+    internal sealed class FakeUsersProvider : IUsersProvider
     {
         private readonly List<UserDto> _users = new List<UserDto>();
 
@@ -36,56 +35,47 @@ namespace Samples.AspNetCore.Server.Data.Fake.Providers
             return _users.FirstOrDefault(x => x.Id == id);
         }
 
-        public Task<IEnumerable<UserDto>> GetUsersAsync()
+        UserDto[] IUsersProvider.GetUsers()
         {
-            return Task.Run(() => (IEnumerable<UserDto>) _users.ToArray());
+            return _users.ToArray();
         }
 
-        public Task<UserDto> GetUserByName(string username)
+        UserDto IUsersProvider.GetUserByName(string username)
         {
-            return Task.Run(() => GetUserByNameInternal(username));
+            return GetUserByNameInternal(username);
         }
 
-        public Task<UserDto> GetUserById(Guid id)
+        UserDto IUsersProvider.GetUserById(Guid id)
         {
-            return Task.Run(() => GetUserByIdInternal(id));
+            return GetUserByIdInternal(id);
         }
 
-        public Task<UserDto> AddUserAsync(string username, string fullname)
+        UserDto IUsersProvider.AddUser(string username, string fullname)
         {
-            return Task.Run(() =>
+            if (GetUserByNameInternal(username) != null)
             {
-                if (GetUserByNameInternal(username) != null)
-                {
-                    throw new ApplicationException($"User '{username}' already added.");
-                }
+                throw new ApplicationException($"User '{username}' already added.");
+            }
 
-                var userDto = CreateUser(username, fullname);
-                _users.Add(userDto);
+            var userDto = CreateUser(username, fullname);
+            _users.Add(userDto);
 
-                return userDto;
-            });
+            return userDto;
         }
 
-        public Task<bool> RemoveUserAsync(Guid id)
+        bool IUsersProvider.RemoveUser(Guid id)
         {
-            return Task.Run(() =>
-            {
-                var user = GetUserByIdInternal(id);
-                return _users.Remove(user);
-            });
+            var user = GetUserByIdInternal(id);
+            return _users.Remove(user);
         }
 
-        public Task<UserDto> UpdateUserAsync(Guid id, string username, string fullname)
+        UserDto IUsersProvider.UpdateUser(Guid id, string username, string fullname)
         {
-            return Task.Run(() =>
-            {
-                var user = GetUserByIdInternal(id);
-                user.Username = username;
-                user.Fullname = fullname;
+            var user = GetUserByIdInternal(id);
+            user.Username = username;
+            user.Fullname = fullname;
 
-                return user;
-            });
+            return user;
         }
     }
 }

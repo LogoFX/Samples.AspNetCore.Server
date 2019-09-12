@@ -5,8 +5,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Samples.AspNetCore.Server.Infra;
-using Solid.Bootstrapping;
-using BootstrapperBase = LogoFX.Server.Bootstrapping.BootstrapperBase;
+using Samples.AspNetCore.Server.Services.Sdk;
+using LogoFX.Server.Bootstrapping;
 
 namespace Samples.AspNetCore.Server.Facade
 {
@@ -21,9 +21,10 @@ namespace Samples.AspNetCore.Server.Facade
         public void ConfigureServices(IServiceCollection services)
         {
             var bootstrapper = new Bootstrapper(services)
-                .Use(new RegisterCustomCompositionModulesMiddleware<BootstrapperBase, IServiceCollection>())
+                .Use(new Solid.Bootstrapping.RegisterCustomCompositionModulesMiddleware<BootstrapperBase, IServiceCollection>())
                 .Use(new RegisterCoreMiddleware<BootstrapperBase>())
                 .Use(new RegisterControllersMiddleware<BootstrapperBase>());
+            bootstrapper.Use(new RegisterDataMiddleware());
             bootstrapper.Use(new RegisterRequestFactoryMiddleware());
             bootstrapper.Initialize();
         }

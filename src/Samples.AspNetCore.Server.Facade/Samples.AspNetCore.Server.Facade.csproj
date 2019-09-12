@@ -35,6 +35,7 @@
     <ProjectReference Include="..\Samples.AspNetCore.Server.Api\Samples.AspNetCore.Server.Api.csproj" />
     <ProjectReference Include="..\Samples.AspNetCore.Server.Data.Fake.ProviderBuilders\Samples.AspNetCore.Server.Data.Fake.ProviderBuilders.csproj" />
     <ProjectReference Include="..\Samples.AspNetCore.Server.Data.Fake.Providers\Samples.AspNetCore.Server.Data.Fake.Providers.csproj" />
+    <ProjectReference Include="..\Samples.AspNetCore.Server.Services.Sdk\Samples.AspNetCore.Server.Services.Sdk.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Configurations>DebugWithFake;Release</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Samples.AspNetCore.Server.Data.Contracts.Providers\Samples.AspNetCore.Server.Data.Contracts.Providers.csproj" />
+    <ProjectReference Include="..\Samples.AspNetCore.Server.Infra\Samples.AspNetCore.Server.Infra.csproj" />
+  </ItemGroup>
+
+</Project>

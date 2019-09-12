@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Samples.AspNetCore.Server.Data.Contracts.Providers;
-using Samples.AspNetCore.Server.Api.Models;
+using Samples.AspNetCore.Server.Domain.Services;
 
 namespace Samples.AspNetCore.Server.Api.Controllers
 {
@@ -13,15 +11,15 @@ namespace Samples.AspNetCore.Server.Api.Controllers
     [Route("api/[controller]")]
     public class UsersController : Controller
     {
-        private readonly IUsersProvider _usersProvider;
+        private readonly IUsersService _usersService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:Samples.AspNetCore.Server.Api.Controllers.UsersController"/> class.
         /// </summary>
-        /// <param name="usersProvider">Users provider.</param>
-        public UsersController(IUsersProvider usersProvider)
+        /// <param name="usersService">Users service.</param>
+        public UsersController(IUsersService usersService)
         {
-            _usersProvider = usersProvider;
+            _usersService = usersService;
         }
 
         /// <summary>
@@ -33,24 +31,7 @@ namespace Samples.AspNetCore.Server.Api.Controllers
         {
             try
             {
-                return Ok((await _usersProvider.GetUsersAsync()).Select(u => u.ToModel()));
-            }
-            catch (Exception ex)
-            {
-                return new BadRequestObjectResult($"Unable to retrieve users: {ex.Message}");
-            }
-        }
-
-        /// <summary>
-        /// Gets user by id.
-        /// </summary>
-        /// <returns>The user.</returns>
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(Guid id)
-        {
-            try
-            {
-                return Ok((await _usersProvider.GetUserById(id)).ToModel());
+                return Ok(await _usersService.GetUsersAsync());
             }
             catch (Exception ex)
             {
@@ -62,12 +43,12 @@ namespace Samples.AspNetCore.Server.Api.Controllers
         /// Gets user by name.
         /// </summary>
         /// <returns>The user.</returns>
-        [HttpGet("name/{username}")]
+        [HttpGet("{username}")]
         public async Task<IActionResult> GetByName(string username)
         {
             try
             {
-                return Ok((await _usersProvider.GetUserByName(username)).ToModel());
+                return Ok(await _usersService.GetUserByNameAsync(username));
             }
             catch (Exception ex)
             {
@@ -85,13 +66,13 @@ namespace Samples.AspNetCore.Server.Api.Controllers
         {
             try
             {
-                var user = await _usersProvider.GetUserByName(username);
+                var user = await _usersService.GetUserByNameAsync(username);
                 if (user == null)
                 {
                     return NotFound($"User '{username}' not found.");
                 }
 
-                await _usersProvider.RemoveUserAsync(user.Id);
+                await _usersService.RemoveUserAsync(user);
 
                 return Ok();
             }
@@ -112,13 +93,13 @@ namespace Samples.AspNetCore.Server.Api.Controllers
         {
             try
             {
-                var user = await _usersProvider.GetUserByName(username);
+                var user = await _usersService.GetUserByNameAsync(username);
                 if (user == null)
                 {
                     return NotFound($"User '{username}' not found.");
                 }
 
-                await _usersProvider.UpdateUserAsync(user.Id, username, fullname);
+                await _usersService.UpdateUserAsync(user, username, fullname);
 
                 return Ok();
             }
@@ -139,7 +120,7 @@ namespace Samples.AspNetCore.Server.Api.Controllers
         {
             try
             {
-                await _usersProvider.AddUserAsync(username, fullname);
+                await _usersService.AddUserAsync(username, fullname);
                 return Ok();
             }
             catch (Exception ex)

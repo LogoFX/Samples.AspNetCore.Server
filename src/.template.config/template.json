@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "LogoUI",
+  "classifications": [ "LogoFX", "Web" ], 
+  "name": "LogoFX ASP.NET Core Application",
+  "identity": "LogoFX.Web.Mvvm.CSharp",         
+  "groupIdentity":"LogoFX.Web.Mvvm",
+  "shortName": "logofx-web",
+  "tags": {
+    "language": "C#",
+    "type":"project"
+  },
+  "sourceName": "Samples.AspNetCore.Server",
+  "preferNameDirectory": true
+}
